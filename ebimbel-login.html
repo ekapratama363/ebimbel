@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Masuk — eBimbel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="ebimbel-theme.css" />
+  </head>
+  <body class="eb-login">
+    <div class="container-fluid g-0">
+      <div class="row g-0 eb-login-split">
+        <div class="col-lg-5 d-none d-lg-flex eb-login-hero">
+          <div class="eb-login-hero-inner">
+            <p class="small text-white-50 fw-semibold text-uppercase letter-spacing mb-2">Prototype</p>
+            <h2>Panel pengelolaan bimbel dalam satu alur</h2>
+            <p>
+              Akademik, kesiswaan, keuangan, dan kepegawaian dirancang supaya tim operasional cepat
+              menemukan data yang relevan.
+            </p>
+            <ul class="eb-login-points" aria-label="Ringkasan">
+              <li>
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i>
+                <span>Akses ke dokumen modul &amp; ruang lingkup fitur (tanpa backend).</span>
+              </li>
+              <li>
+                <i class="bi bi-shield-lock" aria-hidden="true"></i>
+                <span>Tampilan siap untuk iterasi desain sistem &amp; SSO produksi.</span>
+              </li>
+              <li>
+                <i class="bi bi-phone" aria-hidden="true"></i>
+                <span>Layout responsif untuk laptop dan ponsel.</span>
+              </li>
+              <li>
+                <i class="bi bi-send-check" aria-hidden="true"></i>
+                <span>Laporan harian guru dapat diterbitkan ke portal orang tua (wali).</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-lg-7 eb-login-panel">
+          <div class="w-100" style="max-width: 440px">
+            <p class="mb-3">
+              <a href="ebimbel-modul.html" class="eb-login-back d-inline-flex align-items-center gap-2">
+                <i class="bi bi-arrow-left" aria-hidden="true"></i> Kembali ke dokumen modul
+              </a>
+            </p>
+
+            <div class="card eb-login-card border-0">
+              <div class="card-body">
+                <div class="d-flex align-items-center gap-3 mb-4">
+                  <div class="eb-brand-mark-lg" aria-hidden="true">eB</div>
+                  <div>
+                    <h1 class="h4 mb-0 fw-bold" style="letter-spacing: -0.03em">eBimbel</h1>
+                    <p class="text-muted small mb-0">Masuk ke panel pengelolaan</p>
+                  </div>
+                </div>
+
+                <div
+                  class="alert alert-light border small py-2 px-3 mb-4"
+                  role="note"
+                  style="border-color: var(--eb-border) !important; background: var(--eb-surface-2)"
+                >
+                  <i class="bi bi-info-circle me-1 text-primary"></i>
+                  Prototype statis — tidak memanggil API. Kredensial apa pun mengarah ke contoh akademik.
+                </div>
+
+                <form id="form-login" novalidate>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email atau nama pengguna</label>
+                    <div class="eb-input-icon-wrap">
+                      <i class="bi bi-person eb-input-icon" aria-hidden="true"></i>
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="email"
+                        name="email"
+                        autocomplete="username"
+                        required
+                        placeholder="admin@bimbel.contoh"
+                      />
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label">Kata sandi</label>
+                    <div class="eb-input-icon-wrap">
+                      <i class="bi bi-key eb-input-icon" aria-hidden="true"></i>
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                        placeholder="••••••••"
+                      />
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="remember" name="remember" />
+                      <label class="form-check-label small" for="remember"> Ingat saya </label>
+                    </div>
+                    <a href="#" class="small fw-semibold text-decoration-none" style="color: var(--eb-primary)" onclick="return false;">Lupa kata sandi?</a>
+                  </div>
+                  <button type="submit" class="btn btn-eb-primary w-100 py-2 fw-semibold rounded-3">
+                    Masuk
+                  </button>
+                </form>
+
+                <hr class="my-4 text-muted opacity-25" />
+                <p class="small text-muted text-center mb-2">Orang tua / wali siswa</p>
+                <a
+                  href="ebimbel-orang-tua.html"
+                  class="btn btn-outline-secondary w-100 py-2 fw-semibold rounded-3 d-inline-flex align-items-center justify-content-center gap-2"
+                >
+                  <i class="bi bi-people" aria-hidden="true"></i>
+                  Lihat laporan harian guru
+                </a>
+                <p class="text-center text-muted small mt-2 mb-0">
+                  Tanpa kata sandi — pratinjau portal wali (demo).
+                </p>
+              </div>
+            </div>
+            <p class="text-center text-muted small mt-3 mb-0">© eBimbel — mockup kebutuhan</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      document.getElementById("form-login").addEventListener("submit", function (e) {
+        e.preventDefault();
+        window.location.href = "ebimbel-akademik.html";
+      });
+    </script>
+  </body>
+</html>

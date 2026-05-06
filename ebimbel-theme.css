@@ -1,0 +1,579 @@
+/**
+ * eBimbel — shared UI theme (prototype dashboards + login)
+ */
+:root {
+  --eb-primary: #2563eb;
+  --eb-primary-hover: #1d4ed8;
+  --eb-primary-soft: rgba(37, 99, 235, 0.1);
+  --eb-primary-border: rgba(37, 99, 235, 0.2);
+  --eb-accent-legacy: #2c6eb5;
+  --eb-bg: #f1f5f9;
+  --eb-bg-gradient: linear-gradient(145deg, #e8eef7 0%, #f1f5f9 42%, #eef2ff 100%);
+  --eb-surface: #ffffff;
+  --eb-surface-2: #f8fafc;
+  --eb-text: #0f172a;
+  --eb-text-muted: #64748b;
+  --eb-border: rgba(15, 23, 42, 0.08);
+  --eb-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --eb-shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.07), 0 10px 24px -6px rgba(15, 23, 42, 0.08);
+  --eb-shadow-lg: 0 12px 40px -12px rgba(15, 23, 42, 0.15);
+  --eb-radius: 0.875rem;
+  --eb-radius-sm: 0.65rem;
+  --eb-font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ---------- App shell ---------- */
+body.eb-app {
+  font-family: var(--eb-font);
+  background: var(--eb-bg-gradient);
+  background-attachment: fixed;
+  color: var(--eb-text);
+  min-height: 100vh;
+}
+
+.eb-main {
+  max-width: 1280px;
+}
+
+/* ---------- Top bar ---------- */
+.navbar-eb {
+  background: linear-gradient(105deg, #1e3a8a 0%, var(--eb-primary) 48%, #4f46e5 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+}
+
+.navbar-eb .navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-size: 1.05rem;
+}
+
+.eb-logo {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.6rem;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.navbar-eb .nav-module {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 0.4rem 0.75rem;
+  border-radius: 999px;
+  color: rgba(255, 255, 255, 0.78) !important;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.navbar-eb .nav-module:hover {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.navbar-eb .nav-module.active {
+  color: #0f172a !important;
+  background: #fff;
+  font-weight: 600;
+  box-shadow: var(--eb-shadow-sm);
+}
+
+.navbar-eb .eb-user-pill {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+}
+
+.navbar-eb .btn-outline-light {
+  --bs-btn-border-color: rgba(255, 255, 255, 0.45);
+  --bs-btn-color: #fff;
+  --bs-btn-hover-bg: rgba(255, 255, 255, 0.12);
+  --bs-btn-hover-border-color: #fff;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+}
+
+/* ---------- Page header ---------- */
+.eb-page-head {
+  background: var(--eb-surface);
+  border-radius: var(--eb-radius);
+  border: 1px solid var(--eb-border);
+  box-shadow: var(--eb-shadow);
+}
+
+.eb-page-head .card-body {
+  padding: 1.25rem 1.35rem;
+}
+
+@media (min-width: 768px) {
+  .eb-page-head .card-body {
+    padding: 1.4rem 1.5rem;
+  }
+}
+
+.eb-page-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.25rem;
+}
+
+.eb-page-desc {
+  color: var(--eb-text-muted);
+  font-size: 0.875rem;
+  margin: 0;
+  max-width: 52ch;
+  line-height: 1.5;
+}
+
+.eb-doc-link {
+  border-radius: 999px;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-color: var(--eb-border);
+  color: var(--eb-text);
+}
+
+.eb-doc-link:hover {
+  border-color: #cbd5e1;
+  background: var(--eb-surface-2);
+  color: var(--eb-text);
+}
+
+/* ---------- Subnav (tabs as pills) ---------- */
+.eb-subnav-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.eb-subnav {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.3rem;
+  background: var(--eb-surface);
+  border: 1px solid var(--eb-border);
+  border-radius: 999px;
+  box-shadow: var(--eb-shadow-sm);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.eb-subnav::-webkit-scrollbar {
+  display: none;
+}
+
+.eb-subnav .nav-item {
+  flex-shrink: 0;
+}
+
+.eb-subnav .nav-link {
+  border: none;
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--eb-text-muted);
+  background: transparent;
+  white-space: nowrap;
+  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.eb-subnav .nav-link:hover {
+  color: var(--eb-primary);
+  background: var(--eb-primary-soft);
+}
+
+.eb-subnav .nav-link.active {
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--eb-primary) 0%, #4f46e5 100%);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+/* ---------- Cards & tables ---------- */
+.eb-card,
+.table-card {
+  background: var(--eb-surface);
+  border-radius: var(--eb-radius);
+  border: 1px solid var(--eb-border);
+  box-shadow: var(--eb-shadow);
+  overflow: hidden;
+}
+
+.eb-card .card-header,
+.table-card .card-header {
+  background: linear-gradient(180deg, var(--eb-surface) 0%, var(--eb-surface-2) 100%);
+  border-bottom: 1px solid var(--eb-border);
+  font-weight: 600;
+}
+
+.eb-table-toolbar {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--eb-border);
+  background: var(--eb-surface);
+}
+
+.eb-table-wrap .table {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}
+
+.eb-table-wrap thead th {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: var(--eb-text-muted);
+  background: var(--eb-surface-2) !important;
+  border-bottom: 1px solid var(--eb-border);
+  padding: 0.75rem 1rem;
+  white-space: nowrap;
+}
+
+.eb-table-wrap tbody td {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+  border-color: rgba(15, 23, 42, 0.06);
+}
+
+.eb-table-wrap tbody tr:hover {
+  background: rgba(37, 99, 235, 0.03);
+}
+
+.eb-table-wrap code {
+  font-size: 0.8em;
+  background: var(--eb-surface-2);
+  padding: 0.12rem 0.35rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--eb-border);
+}
+
+/* ---------- Buttons ---------- */
+.btn-eb,
+.btn-eb-primary {
+  --bs-btn-bg: var(--eb-primary);
+  --bs-btn-border-color: var(--eb-primary);
+  --bs-btn-hover-bg: var(--eb-primary-hover);
+  --bs-btn-hover-border-color: var(--eb-primary-hover);
+  --bs-btn-active-bg: var(--eb-primary-hover);
+  --bs-btn-active-border-color: var(--eb-primary-hover);
+  font-weight: 600;
+  border-radius: 0.55rem;
+  box-shadow: 0 1px 3px rgba(37, 99, 235, 0.25);
+}
+
+.btn-eb.btn-sm,
+.btn-eb-primary.btn-sm {
+  border-radius: 999px;
+  padding-inline: 1rem;
+}
+
+/* ---------- Badges ---------- */
+.badge-eb {
+  background: var(--eb-primary-soft);
+  color: var(--eb-primary);
+  font-weight: 600;
+  padding: 0.35em 0.65em;
+}
+
+.badge-soft-success {
+  background: rgba(16, 185, 129, 0.12);
+  color: #047857;
+  font-weight: 600;
+}
+
+.badge-soft-warning {
+  background: rgba(245, 158, 11, 0.15);
+  color: #b45309;
+  font-weight: 600;
+}
+
+.badge-soft-danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+  font-weight: 600;
+}
+
+/* ---------- KPI / stat cards ---------- */
+.eb-stat {
+  border-radius: var(--eb-radius);
+  border: 1px solid var(--eb-border);
+  box-shadow: var(--eb-shadow);
+  background: var(--eb-surface);
+  height: 100%;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.eb-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--eb-shadow-lg);
+}
+
+.eb-stat .card-body {
+  padding: 1.35rem 1.15rem;
+}
+
+.eb-stat-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--eb-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.35rem;
+  margin-bottom: 0.85rem;
+}
+
+/* ---------- Avatars (tables) ---------- */
+.eb-avatar {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.eb-avatar-sm {
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 0.72rem;
+}
+
+.eb-avatar--primary {
+  background: linear-gradient(135deg, var(--eb-primary), #6366f1);
+}
+.eb-avatar--secondary {
+  background: linear-gradient(135deg, #64748b, #475569);
+}
+.eb-avatar--success {
+  background: linear-gradient(135deg, #10b981, #059669);
+}
+
+/* ---------- Modals ---------- */
+.eb-modal .modal-content {
+  border: 1px solid var(--eb-border);
+  border-radius: var(--eb-radius);
+  box-shadow: var(--eb-shadow-lg);
+}
+
+.eb-modal .modal-header {
+  border-bottom: 1px solid var(--eb-border);
+  padding: 1rem 1.25rem;
+}
+
+.eb-modal .modal-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.02em;
+}
+
+.eb-modal .modal-footer {
+  border-top: 1px solid var(--eb-border);
+  padding: 0.85rem 1.25rem;
+}
+
+.eb-modal .form-label {
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: var(--eb-text);
+}
+
+.eb-modal .form-control,
+.eb-modal .form-select {
+  border-radius: var(--eb-radius-sm);
+  border-color: #e2e8f0;
+}
+
+.eb-modal .form-control:focus,
+.eb-modal .form-select:focus {
+  border-color: var(--eb-primary);
+  box-shadow: 0 0 0 0.2rem var(--eb-primary-soft);
+}
+
+/* ---------- Forms (global focus) ---------- */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--eb-primary);
+  box-shadow: 0 0 0 0.2rem var(--eb-primary-soft);
+}
+
+/* ---------- Login page ---------- */
+body.eb-login {
+  font-family: var(--eb-font);
+  min-height: 100vh;
+  background: var(--eb-bg-gradient);
+  background-attachment: fixed;
+}
+
+.eb-login-split {
+  min-height: 100vh;
+}
+
+.eb-login-hero {
+  background: linear-gradient(155deg, #1e3a8a 0%, var(--eb-primary) 45%, #6366f1 100%);
+  color: #fff;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.eb-login-hero::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.18), transparent 55%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1), transparent 45%);
+  pointer-events: none;
+}
+
+.eb-login-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 420px;
+}
+
+.eb-login-hero h2 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  font-size: clamp(1.5rem, 3vw, 1.85rem);
+  margin-bottom: 0.75rem;
+}
+
+.eb-login-hero p {
+  opacity: 0.92;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.eb-login-points {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.eb-login-points li {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  margin-bottom: 0.85rem;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  opacity: 0.95;
+}
+
+.eb-login-points li i {
+  margin-top: 0.15rem;
+  opacity: 0.9;
+}
+
+.eb-login-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1.25rem 2.5rem;
+}
+
+@media (min-width: 992px) {
+  .eb-login-panel {
+    padding: 3rem 2.5rem;
+  }
+}
+
+.eb-login-card {
+  width: 100%;
+  max-width: 420px;
+  border: 1px solid var(--eb-border);
+  border-radius: var(--eb-radius);
+  box-shadow: var(--eb-shadow-lg);
+  background: var(--eb-surface);
+  overflow: hidden;
+}
+
+.eb-login-card .card-body {
+  padding: 2rem 1.75rem;
+}
+
+@media (min-width: 576px) {
+  .eb-login-card .card-body {
+    padding: 2.25rem 2rem;
+  }
+}
+
+.eb-brand-mark-lg {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.85rem;
+  background: linear-gradient(145deg, var(--eb-primary), #4f46e5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+}
+
+.eb-login-back {
+  color: var(--eb-text-muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.eb-login-back:hover {
+  color: var(--eb-primary);
+}
+
+.eb-input-icon-wrap {
+  position: relative;
+}
+
+.eb-input-icon-wrap .form-control {
+  padding-left: 2.5rem;
+  border-radius: var(--eb-radius-sm);
+  min-height: 2.65rem;
+}
+
+.eb-input-icon-wrap .form-control-sm {
+  min-height: 2.4rem;
+  padding-left: 2.35rem;
+}
+
+.eb-input-icon-wrap .eb-input-icon {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--eb-text-muted);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.eb-input-icon-wrap:has(.form-control-sm) .eb-input-icon {
+  font-size: 0.9rem;
+}

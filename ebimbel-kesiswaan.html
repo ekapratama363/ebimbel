@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Manajemen kesiswaan — eBimbel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="ebimbel-theme.css" />
+  </head>
+  <body class="eb-app">
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-eb shadow-sm">
+      <div class="container-fluid px-3 px-md-4">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="ebimbel-kesiswaan.html">
+          <span class="eb-logo" aria-hidden="true">eB</span>
+          <span>eBimbel</span>
+        </a>
+        <div
+          class="navbar-collapse d-flex flex-grow-1 justify-content-between align-items-center flex-wrap gap-2 py-2 py-lg-0"
+        >
+          <div class="d-flex flex-wrap gap-1">
+            <a class="nav-module" href="ebimbel-akademik.html"
+              ><i class="bi bi-journal-bookmark me-1"></i>Akademik</a
+            >
+            <a class="nav-module active" href="ebimbel-kesiswaan.html" aria-current="page"
+              ><i class="bi bi-people me-1"></i>Kesiswaan</a
+            >
+            <a class="nav-module" href="ebimbel-keuangan.html"
+              ><i class="bi bi-cash-coin me-1"></i>Keuangan</a
+            >
+            <a class="nav-module" href="ebimbel-kepegawaian.html"
+              ><i class="bi bi-person-badge me-1"></i>Kepegawaian</a
+            >
+          </div>
+          <div class="d-flex align-items-center gap-2">
+            <span class="eb-user-pill d-none d-sm-inline-flex align-items-center gap-1 mb-0">
+              <i class="bi bi-person-circle" aria-hidden="true"></i> Admin (demo)
+            </span>
+            <a class="btn btn-sm btn-outline-light" href="ebimbel-login.html">Keluar</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <main class="eb-main container-fluid px-3 px-md-4 py-4">
+      <div class="card eb-page-head border-0 mb-4">
+        <div
+          class="card-body d-flex flex-column flex-md-row justify-content-between align-items-start gap-3"
+        >
+          <div>
+            <h1 class="eb-page-title">Manajemen kesiswaan</h1>
+            <p class="eb-page-desc">
+              Kelompok/kelas, data siswa, dan wali — prototype tanpa backend (sesuai cakupan modul M-01).
+            </p>
+          </div>
+          <a
+            href="ebimbel-modul.html"
+            class="btn btn-outline-secondary btn-sm eb-doc-link align-self-md-center"
+            >Lihat dokumen modul</a
+          >
+        </div>
+      </div>
+
+      <div class="eb-subnav-wrap">
+        <ul class="nav eb-subnav" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="tab-kelompok"
+              data-bs-toggle="tab"
+              data-bs-target="#pane-kelompok"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-grid-3x3-gap me-1"></i> Kelompok &amp; kelas
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-siswa"
+              data-bs-toggle="tab"
+              data-bs-target="#pane-siswa"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-person-lines-fill me-1"></i> Data siswa
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-wali"
+              data-bs-toggle="tab"
+              data-bs-target="#pane-wali"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-person-hearts me-1"></i> Wali &amp; kontak
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="tab-content">
+        <div class="tab-pane fade show active" id="pane-kelompok" role="tabpanel">
+          <div class="card table-card border-0">
+            <div
+              class="eb-table-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2"
+            >
+              <span class="fw-semibold">Kelompok / rombel / grup belajar</span>
+              <button
+                type="button"
+                class="btn btn-sm btn-eb"
+                data-bs-toggle="modal"
+                data-bs-target="#modalKelompok"
+              >
+                <i class="bi bi-plus-lg"></i> Tambah kelompok
+              </button>
+            </div>
+            <div class="table-responsive eb-table-wrap">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Kode</th>
+                    <th>Nama kelompok</th>
+                    <th>Program</th>
+                    <th>Kapasitas</th>
+                    <th>Siswa terisi</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>KEL-A</code></td>
+                    <td>IPA Intensif — Kelas A</td>
+                    <td>PRG-01 IPA Intensif UTBK</td>
+                    <td>30</td>
+                    <td>24</td>
+                    <td><span class="badge badge-eb rounded-pill">Aktif</span></td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 me-2 fw-semibold">Ubah</button>
+                      <button type="button" class="btn btn-link btn-sm text-danger p-0 fw-semibold">
+                        Hapus
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>KEL-B</code></td>
+                    <td>IPA Intensif — Kelas B</td>
+                    <td>PRG-01 IPA Intensif UTBK</td>
+                    <td>28</td>
+                    <td>18</td>
+                    <td><span class="badge badge-eb rounded-pill">Aktif</span></td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 me-2 fw-semibold">Ubah</button>
+                      <button type="button" class="btn btn-link btn-sm text-danger p-0 fw-semibold">
+                        Hapus
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>KEL-MTD</code></td>
+                    <td>Matematika Dasar — Kelas 10</td>
+                    <td>PRG-02 Matematika Dasar</td>
+                    <td>20</td>
+                    <td>20</td>
+                    <td><span class="badge badge-soft-warning rounded-pill">Penuh</span></td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 me-2 fw-semibold">Ubah</button>
+                      <button type="button" class="btn btn-link btn-sm text-danger p-0 fw-semibold">
+                        Hapus
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="pane-siswa" role="tabpanel">
+          <div class="card table-card border-0">
+            <div
+              class="eb-table-toolbar d-flex justify-content-between align-items-center flex-wrap gap-3"
+            >
+              <div class="d-flex flex-wrap gap-2 align-items-center flex-grow-1">
+                <span class="fw-semibold">Data siswa</span>
+                <div class="eb-input-icon-wrap flex-grow-1" style="max-width: 280px">
+                  <i class="bi bi-search eb-input-icon" aria-hidden="true"></i>
+                  <input
+                    type="search"
+                    class="form-control form-control-sm"
+                    placeholder="Cari nama / NIS…"
+                    aria-label="Cari siswa"
+                  />
+                </div>
+              </div>
+              <button type="button" class="btn btn-sm btn-eb" data-bs-toggle="modal" data-bs-target="#modalSiswa">
+                <i class="bi bi-plus-lg"></i> Tambah siswa
+              </button>
+            </div>
+            <div class="table-responsive eb-table-wrap">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>NIS</th>
+                    <th>Nama lengkap</th>
+                    <th>Kelompok</th>
+                    <th>Status</th>
+                    <th>Terdaftar</th>
+                    <th class="text-end">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><code>2026-0142</code></td>
+                    <td>Andi Pratama</td>
+                    <td>KEL-A</td>
+                    <td><span class="badge badge-soft-success rounded-pill">Aktif</span></td>
+                    <td class="small text-muted">12 Jan 2026</td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 me-2 fw-semibold">Profil</button>
+                      <button type="button" class="btn btn-link btn-sm p-0 fw-semibold">Ubah</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>2026-0208</code></td>
+                    <td>Dewi Lestari</td>
+                    <td>KEL-A</td>
+                    <td><span class="badge badge-soft-success rounded-pill">Aktif</span></td>
+                    <td class="small text-muted">3 Feb 2026</td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 me-2 fw-semibold">Profil</button>
+                      <button type="button" class="btn btn-link btn-sm p-0 fw-semibold">Ubah</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><code>2025-0091</code></td>
+                    <td>Rizky Maulana</td>
+                    <td>KEL-B</td>
+                    <td><span class="badge rounded-pill text-secondary bg-light">Cuti</span></td>
+                    <td class="small text-muted">8 Agu 2025</td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 me-2 fw-semibold">Profil</button>
+                      <button type="button" class="btn btn-link btn-sm p-0 fw-semibold">Ubah</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="pane-wali" role="tabpanel">
+          <div class="card table-card border-0">
+            <div
+              class="eb-table-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2"
+            >
+              <span class="fw-semibold">Wali siswa &amp; kontak darurat</span>
+              <button type="button" class="btn btn-sm btn-eb" data-bs-toggle="modal" data-bs-target="#modalWali">
+                <i class="bi bi-plus-lg"></i> Hubungkan wali
+              </button>
+            </div>
+            <div class="table-responsive eb-table-wrap">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Siswa</th>
+                    <th>Nama wali</th>
+                    <th>Hubungan</th>
+                    <th>Telepon</th>
+                    <th>Email</th>
+                    <th class="text-end">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Andi Pratama</td>
+                    <td>Budi Santoso</td>
+                    <td>Ayah</td>
+                    <td>0812-xxxx-xxxx</td>
+                    <td class="small">budi.s@email.test</td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 fw-semibold">Ubah</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Dewi Lestari</td>
+                    <td>Siti Rahayu</td>
+                    <td>Ibu</td>
+                    <td>0857-xxxx-xxxx</td>
+                    <td class="small">siti.r@email.test</td>
+                    <td class="text-end">
+                      <button type="button" class="btn btn-link btn-sm p-0 fw-semibold">Ubah</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="modal fade eb-modal" id="modalKelompok" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Tambah kelompok</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Kode kelompok</label>
+              <input type="text" class="form-control" placeholder="KEL-C" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nama kelompok</label>
+              <input type="text" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Program</label>
+              <select class="form-select">
+                <option>PRG-01 IPA Intensif UTBK</option>
+                <option>PRG-02 Matematika Dasar Kelas 10</option>
+              </select>
+            </div>
+            <div class="mb-0">
+              <label class="form-label">Kapasitas</label>
+              <input type="number" class="form-control" min="1" value="25" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-eb" data-bs-dismiss="modal">Simpan (demo)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade eb-modal" id="modalSiswa" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Tambah siswa</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">NIS / nomor induk</label>
+                <input type="text" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Nama lengkap</label>
+                <input type="text" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Kelompok</label>
+                <select class="form-select">
+                  <option>KEL-A</option>
+                  <option>KEL-B</option>
+                  <option>KEL-MTD</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <select class="form-select">
+                  <option>Aktif</option>
+                  <option>Cuti</option>
+                  <option>Nonaktif</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Tanggal lahir</label>
+                <input type="date" class="form-control" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Jenis kelamin</label>
+                <select class="form-select">
+                  <option>Laki-laki</option>
+                  <option>Perempuan</option>
+                </select>
+              </div>
+              <div class="col-12 mb-0">
+                <label class="form-label">Alamat</label>
+                <textarea class="form-control" rows="2"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-eb" data-bs-dismiss="modal">Simpan (demo)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade eb-modal" id="modalWali" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Hubungkan wali siswa</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Siswa</label>
+              <select class="form-select">
+                <option>Andi Pratama</option>
+                <option>Dewi Lestari</option>
+                <option>Rizky Maulana</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Nama wali</label>
+              <input type="text" class="form-control" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Hubungan</label>
+              <select class="form-select">
+                <option>Ayah</option>
+                <option>Ibu</option>
+                <option>Wali</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Telepon</label>
+              <input type="tel" class="form-control" />
+            </div>
+            <div class="mb-0">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-control" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="button" class="btn btn-eb" data-bs-dismiss="modal">Simpan (demo)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
