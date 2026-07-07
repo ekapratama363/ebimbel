@@ -32,6 +32,9 @@ class DuitkuService
             $productDetails .= ' ('.$payment->period_label.')';
         }
 
+        $email = $this->normalizeEmail($customer['email'] ?? null);
+        $phone = $this->normalizePhone($customer['phone'] ?? null);
+
         $payload = [
             'merchantCode' => $merchantCode,
             'paymentAmount' => $amount,
@@ -41,8 +44,8 @@ class DuitkuService
             'additionalParam' => (string) $payment->id,
             'merchantUserInfo' => $payment->student->nis,
             'customerVaName' => $customer['name'] ?? $payment->student->name,
-            'email' => $customer['email'] ?? 'noreply@'.$this->hostFromUrl(config('app.url')),
-            'phoneNumber' => $customer['phone'] ?? '08123456789',
+            'email' => $email,
+            'phoneNumber' => $phone,
             'itemDetails' => [[
                 'name' => $payment->paymentType?->name ?? 'Pembayaran siswa',
                 'price' => $amount,
@@ -51,8 +54,8 @@ class DuitkuService
             'customerDetail' => [
                 'firstName' => $customer['first_name'] ?? $payment->student->name,
                 'lastName' => $customer['last_name'] ?? '',
-                'email' => $customer['email'] ?? 'noreply@'.$this->hostFromUrl(config('app.url')),
-                'phoneNumber' => $customer['phone'] ?? '08123456789',
+                'email' => $email,
+                'phoneNumber' => $phone,
             ],
             'callbackUrl' => $this->callbackUrl(),
             'returnUrl' => $this->returnUrl(),
@@ -130,5 +133,32 @@ class DuitkuService
         $host = parse_url($url, PHP_URL_HOST);
 
         return $host ?: 'localhost';
+    }
+
+    private function normalizeEmail(?string $email): string
+    {
+        $email = trim((string) $email);
+        if ($email !== '' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $email;
+        }
+
+        // Duitku cenderung menolak domain tanpa TLD (contoh: noreply@localhost),
+        // jadi pakai fallback yang pasti valid.
+        return 'noreply@example.com';
+    }
+
+    private function normalizePhone(?string $phone): string
+    {
+        $digits = preg_replace('/[^0-9]/', '', (string) $phone);
+        if (! $digits) {
+            return '08123456789';
+        }
+
+        // Normalisasi sederhana: jika mulai 62 OK; jika mulai 0 -> ubah ke 62.
+        if (str_starts_with($digits, '0')) {
+            return '62'.substr($digits, 1);
+        }
+
+        return $digits;
     }
 }
