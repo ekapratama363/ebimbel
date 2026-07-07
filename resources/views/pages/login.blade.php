@@ -82,7 +82,7 @@
                         value="{{ old('email') }}"
                         autocomplete="username"
                         required
-                        placeholder="admin@bimbel.contoh"
+                        placeholder="Masukkan email"
                       />
                     </div>
                     @error('email')
