@@ -59,14 +59,14 @@
                   <h1 class="h6 text-muted fw-semibold mb-0 mt-2">Masuk ke panel pengelolaan</h1>
                 </header>
 
-                <div
+                <!-- <div
                   class="alert alert-light border small py-2 px-3 mb-4"
                   role="note"
                   style="border-color: var(--eb-border) !important; background: var(--eb-surface-2)"
                 >
                   <i class="bi bi-info-circle me-1 text-primary"></i>
                   Akun demo: <strong>admin@bimbel.contoh</strong> / <strong>password</strong>
-                </div>
+                </div> -->
 
                 <form id="form-login" method="post" action="{{ route('login.store') }}" novalidate>
                   @csrf
