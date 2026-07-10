@@ -6,6 +6,7 @@ use App\Models\Guardian;
 use App\Models\Kelompok;
 use App\Models\Program;
 use App\Models\Student;
+use App\Models\StudentAttendance;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -16,6 +17,29 @@ class KesiswaanController extends Controller
     public function index(Request $request): View
     {
         $search = $request->query('q');
+        $absensiDate = $request->query('absensi_tanggal', now()->toDateString());
+        $absensiKelompokId = (int) $request->query('absensi_kelompok', 0);
+
+        $kelompoks = Kelompok::with('program')->withCount('students')->orderBy('code')->get();
+
+        if (! $absensiKelompokId && $kelompoks->isNotEmpty()) {
+            $absensiKelompokId = $kelompoks->first()->id;
+        }
+
+        $absensiStudents = collect();
+        $absensiRecords = collect();
+
+        if ($absensiKelompokId) {
+            $absensiStudents = Student::where('kelompok_id', $absensiKelompokId)
+                ->where('status', 'aktif')
+                ->orderBy('name')
+                ->get();
+
+            $absensiRecords = StudentAttendance::where('date', $absensiDate)
+                ->whereIn('student_id', $absensiStudents->pluck('id'))
+                ->get()
+                ->keyBy('student_id');
+        }
 
         $studentsQuery = Student::with('kelompok')->orderBy('name');
         if ($search) {
@@ -26,11 +50,15 @@ class KesiswaanController extends Controller
         }
 
         return view('pages.kesiswaan', [
-            'kelompoks' => Kelompok::with('program')->withCount('students')->orderBy('code')->get(),
+            'kelompoks' => $kelompoks,
             'students' => $studentsQuery->get(),
             'guardians' => Guardian::with('student')->orderBy('name')->get(),
             'programs' => Program::orderBy('code')->get(),
             'search' => $search,
+            'absensiDate' => $absensiDate,
+            'absensiKelompokId' => $absensiKelompokId,
+            'absensiStudents' => $absensiStudents,
+            'absensiRecords' => $absensiRecords,
         ]);
     }
 
@@ -166,5 +194,29 @@ class KesiswaanController extends Controller
         $guardian->update($data);
 
         return back()->with('status', 'Data wali berhasil diperbarui.');
+    }
+
+    public function storeStudentAttendances(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'date' => 'required|date',
+            'kelompok_id' => 'required|exists:kelompoks,id',
+            'attendances' => 'required|array',
+            'attendances.*' => 'required|in:hadir,izin,sakit,alpha',
+        ]);
+
+        foreach ($data['attendances'] as $studentId => $status) {
+            StudentAttendance::updateOrCreate(
+                ['date' => $data['date'], 'student_id' => $studentId],
+                ['kelompok_id' => $data['kelompok_id'], 'status' => $status]
+            );
+        }
+
+        return redirect()
+            ->route('kesiswaan', [
+                'absensi_tanggal' => $data['date'],
+                'absensi_kelompok' => $data['kelompok_id'],
+            ])
+            ->with('status', 'Absensi siswa berhasil disimpan.');
     }
 }

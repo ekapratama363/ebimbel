@@ -11,21 +11,24 @@ use Illuminate\View\View;
 
 class KepegawaianController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $today = now()->toDateString();
-        $monthStart = now()->startOfMonth()->toDateString();
+        $selectedDate = $request->query('tanggal', now()->toDateString());
+        $monthStart = now()->parse($selectedDate)->startOfMonth()->toDateString();
+        $monthEnd = now()->parse($selectedDate)->endOfMonth()->toDateString();
 
-        $attendancesToday = Attendance::with('employee')
-            ->where('date', $today)
+        $attendancesOnDate = Attendance::with('employee')
+            ->where('date', $selectedDate)
+            ->orderBy('check_in')
             ->get();
 
-        $monthAttendances = Attendance::whereBetween('date', [$monthStart, $today])->get();
+        $monthAttendances = Attendance::whereBetween('date', [$monthStart, $monthEnd])->get();
 
         return view('pages.kepegawaian', [
-            'employees' => Employee::orderBy('name')->get(),
+            'employees' => Employee::where('status', 'aktif')->orderBy('name')->get(),
             'tutors' => Tutor::orderBy('name')->get(),
-            'attendancesToday' => $attendancesToday,
+            'attendancesOnDate' => $attendancesOnDate,
+            'selectedDate' => $selectedDate,
             'hadirCount' => $monthAttendances->where('status', 'hadir')->count(),
             'izinCount' => $monthAttendances->whereIn('status', ['izin', 'cuti'])->count(),
             'tidakHadirCount' => $monthAttendances->where('status', 'tidak_hadir')->count(),
@@ -104,5 +107,55 @@ class KepegawaianController extends Controller
         $tutor->delete();
 
         return back()->with('status', 'Tutor dihapus.');
+    }
+
+    public function storeAttendance(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'date' => 'required|date',
+            'check_in' => 'nullable|string|max:10',
+            'check_out' => 'nullable|string|max:10',
+            'status' => 'required|in:hadir,izin,cuti,tidak_hadir',
+            'notes' => 'nullable|string',
+        ]);
+
+        if (Attendance::where('employee_id', $data['employee_id'])->where('date', $data['date'])->exists()) {
+            return back()
+                ->withInput()
+                ->withErrors(['employee_id' => 'Absensi karyawan ini pada tanggal tersebut sudah tercatat.']);
+        }
+
+        Attendance::create($data);
+
+        return redirect()
+            ->route('kepegawaian', ['tanggal' => $data['date'], 'tab' => 'absensi'])
+            ->with('status', 'Absensi karyawan berhasil dicatat.');
+    }
+
+    public function updateAttendance(Request $request, Attendance $attendance): RedirectResponse
+    {
+        $attendance->update($request->validate([
+            'employee_id' => 'required|exists:employees,id',
+            'date' => 'required|date',
+            'check_in' => 'nullable|string|max:10',
+            'check_out' => 'nullable|string|max:10',
+            'status' => 'required|in:hadir,izin,cuti,tidak_hadir',
+            'notes' => 'nullable|string',
+        ]));
+
+        return redirect()
+            ->route('kepegawaian', ['tanggal' => $attendance->date->format('Y-m-d'), 'tab' => 'absensi'])
+            ->with('status', 'Absensi berhasil diperbarui.');
+    }
+
+    public function destroyAttendance(Attendance $attendance): RedirectResponse
+    {
+        $date = $attendance->date->format('Y-m-d');
+        $attendance->delete();
+
+        return redirect()
+            ->route('kepegawaian', ['tanggal' => $date, 'tab' => 'absensi'])
+            ->with('status', 'Absensi dihapus.');
     }
 }

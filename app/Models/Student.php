@@ -37,6 +37,11 @@ class Student extends Model
         return $this->hasMany(Payment::class);
     }
 
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(StudentAttendance::class);
+    }
+
     public function ensureCardNumber(): void
     {
         if ($this->card_number) {

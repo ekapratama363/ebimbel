@@ -156,7 +156,7 @@ class KeuanganController extends Controller
 
     public function uploadProof(Request $request, Payment $payment): RedirectResponse
     {
-        $request->validate(['proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:5120']);
+        $request->validate(['proof' => 'required|file|mimes:jpg,jpeg,png,pdf|max:2048']);
         $previousStatus = $payment->status;
 
         $payment->deleteProofFile();
@@ -279,7 +279,7 @@ class KeuanganController extends Controller
     private function validatePayment(Request $request): array
     {
         $request->validate([
-            'proof' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120',
+            'proof' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:2048',
         ]);
 
         return $request->validate([

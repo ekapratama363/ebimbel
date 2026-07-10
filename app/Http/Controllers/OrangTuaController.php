@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\DailyReport;
 use App\Models\Guardian;
 use App\Models\Student;
+use App\Models\StudentAttendance;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -28,11 +29,24 @@ class OrangTuaController extends Controller
 
         $guardianName = Guardian::where('student_id', $selectedStudentId)->value('name') ?? 'Wali';
 
+        $monthStart = now()->startOfMonth()->toDateString();
+        $monthEnd = now()->endOfMonth()->toDateString();
+        $monthAttendances = StudentAttendance::where('student_id', $selectedStudentId)
+            ->whereBetween('date', [$monthStart, $monthEnd])
+            ->get();
+
         return view('pages.orang-tua', [
             'students' => $students,
             'selectedStudentId' => (int) $selectedStudentId,
             'reports' => $reports,
             'guardianName' => $guardianName,
+            'attendanceSummary' => [
+                'hadir' => $monthAttendances->where('status', 'hadir')->count(),
+                'izin' => $monthAttendances->where('status', 'izin')->count(),
+                'sakit' => $monthAttendances->where('status', 'sakit')->count(),
+                'alpha' => $monthAttendances->where('status', 'alpha')->count(),
+                'total' => $monthAttendances->count(),
+            ],
         ]);
     }
 }

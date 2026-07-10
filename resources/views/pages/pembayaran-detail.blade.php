@@ -145,6 +145,7 @@
                 <div class="col-md-8">
                   <label class="form-label small">Unggah / ganti bukti</label>
                   <input type="file" class="form-control form-control-sm" name="proof" accept="image/*,.pdf" required />
+                  <div class="form-text">JPG/PNG/PDF, maks. 2 MB.</div>
                 </div>
                 <div class="col-md-4">
                   <button type="submit" class="btn btn-eb btn-sm w-100">Simpan bukti</button>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\DailyReport;
 use App\Models\DailyReportMedia;
+use App\Models\Jenjang;
 use App\Models\Kelompok;
 use App\Models\Program;
 use App\Models\Schedule;
@@ -19,7 +20,8 @@ class AkademikController extends Controller
     public function index(): View
     {
         return view('pages.akademik', [
-            'programs' => Program::orderBy('code')->get(),
+            'jenjangs' => Jenjang::orderBy('sort_order')->orderBy('code')->get(),
+            'programs' => Program::with('jenjang')->orderBy('code')->get(),
             'subjects' => Subject::orderBy('code')->get(),
             'schedules' => Schedule::with(['kelompok', 'subject', 'tutor'])->get(),
             'journals' => TeachingJournal::with(['kelompok', 'subject', 'tutor'])->orderByDesc('date')->get(),
@@ -29,12 +31,47 @@ class AkademikController extends Controller
         ]);
     }
 
+    public function storeJenjang(Request $request): RedirectResponse
+    {
+        Jenjang::create($request->validate([
+            'code' => 'required|string|max:20|unique:jenjangs,code',
+            'name' => 'required|string|max:255',
+            'sort_order' => 'nullable|integer|min:0',
+            'status' => 'required|in:aktif,nonaktif',
+        ]));
+
+        return back()->with('status', 'Jenjang berhasil ditambahkan.');
+    }
+
+    public function updateJenjang(Request $request, Jenjang $jenjang): RedirectResponse
+    {
+        $jenjang->update($request->validate([
+            'code' => 'required|string|max:20|unique:jenjangs,code,'.$jenjang->id,
+            'name' => 'required|string|max:255',
+            'sort_order' => 'nullable|integer|min:0',
+            'status' => 'required|in:aktif,nonaktif',
+        ]));
+
+        return back()->with('status', 'Jenjang berhasil diperbarui.');
+    }
+
+    public function destroyJenjang(Jenjang $jenjang): RedirectResponse
+    {
+        if ($jenjang->programs()->exists()) {
+            return back()->withErrors(['jenjang' => 'Jenjang masih dipakai di program bimbel.']);
+        }
+
+        $jenjang->delete();
+
+        return back()->with('status', 'Jenjang dihapus.');
+    }
+
     public function storeProgram(Request $request): RedirectResponse
     {
         $data = $request->validate([
             'code' => 'required|string|max:20|unique:programs,code',
             'name' => 'required|string|max:255',
-            'jenjang' => 'required|string|max:50',
+            'jenjang_id' => 'required|exists:jenjangs,id',
         ]);
         $data['status'] = 'aktif';
         Program::create($data);
@@ -47,7 +84,7 @@ class AkademikController extends Controller
         $data = $request->validate([
             'code' => 'required|string|max:20|unique:programs,code,'.$program->id,
             'name' => 'required|string|max:255',
-            'jenjang' => 'required|string|max:50',
+            'jenjang_id' => 'required|exists:jenjangs,id',
         ]);
         $program->update($data);
 
@@ -247,9 +284,9 @@ class AkademikController extends Controller
     {
         $request->validate([
             'photos' => 'nullable|array',
-            'photos.*' => 'image|max:5120',
+            'photos.*' => 'image|max:2048',
             'videos' => 'nullable|array',
-            'videos.*' => 'file|mimetypes:video/mp4,video/quicktime,video/webm,video/x-msvideo|max:51200',
+            'videos.*' => 'file|mimetypes:video/mp4,video/quicktime,video/webm,video/x-msvideo|max:2048',
         ]);
     }
 

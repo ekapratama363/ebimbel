@@ -3,11 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Program extends Model
 {
-    protected $fillable = ['code', 'name', 'jenjang', 'status'];
+    protected $fillable = ['code', 'name', 'jenjang_id', 'status'];
+
+    public function jenjang(): BelongsTo
+    {
+        return $this->belongsTo(Jenjang::class);
+    }
 
     public function kelompoks(): HasMany
     {

@@ -50,6 +50,18 @@
           <li class="nav-item" role="presentation">
             <button
               class="nav-link"
+              id="tab-absensi-siswa"
+              data-bs-toggle="tab"
+              data-bs-target="#pane-absensi-siswa"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-calendar-check me-1"></i> Absensi
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
               id="tab-wali"
               data-bs-toggle="tab"
               data-bs-target="#pane-wali"
@@ -223,6 +235,81 @@
                 </tbody>
               </table>
             </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" id="pane-absensi-siswa" role="tabpanel">
+          <div class="card table-card border-0">
+            <div class="card-body border-bottom">
+              <form method="get" action="{{ route('kesiswaan') }}" class="row g-3 align-items-end">
+                <div class="col-md-4">
+                  <label class="form-label" for="absensi-tanggal">Tanggal</label>
+                  <input type="date" class="form-control" id="absensi-tanggal" name="absensi_tanggal" value="{{ $absensiDate }}" />
+                </div>
+                <div class="col-md-5">
+                  <label class="form-label" for="absensi-kelompok">Kelompok</label>
+                  <select class="form-select" id="absensi-kelompok" name="absensi_kelompok">
+                    @foreach ($kelompoks as $kelompok)
+                      <option value="{{ $kelompok->id }}" @selected($kelompok->id == $absensiKelompokId)>
+                        {{ $kelompok->code }} — {{ $kelompok->name }}
+                      </option>
+                    @endforeach
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <button type="submit" class="btn btn-eb w-100">Tampilkan</button>
+                </div>
+              </form>
+            </div>
+
+            @if ($absensiKelompokId && $absensiStudents->isNotEmpty())
+            <form method="post" action="{{ route('kesiswaan.student-attendances.store') }}">
+              @csrf
+              <input type="hidden" name="date" value="{{ $absensiDate }}" />
+              <input type="hidden" name="kelompok_id" value="{{ $absensiKelompokId }}" />
+              <div class="eb-table-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2">
+                <span class="fw-semibold">Absensi {{ \Carbon\Carbon::parse($absensiDate)->locale('id')->translatedFormat('d M Y') }}</span>
+                @perm('kesiswaan.create')
+                <button type="submit" class="btn btn-sm btn-eb">
+                  <i class="bi bi-save me-1"></i> Simpan absensi
+                </button>
+                @endperm
+              </div>
+              <div class="table-responsive eb-table-wrap">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th class="ps-3">NIS</th>
+                      <th>Nama siswa</th>
+                      <th style="min-width: 10rem">Status kehadiran</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach ($absensiStudents as $student)
+                    @php $record = $absensiRecords->get($student->id); @endphp
+                    <tr>
+                      <td class="ps-3"><code>{{ $student->nis }}</code></td>
+                      <td class="fw-semibold">{{ $student->name }}</td>
+                      <td>
+                        <select class="form-select form-select-sm" name="attendances[{{ $student->id }}]" @disabled(! auth()->user()?->hasPermission('kesiswaan.create'))>
+                          @foreach (\App\Models\StudentAttendance::STATUSES as $status)
+                            <option value="{{ $status }}" @selected(($record?->status ?? 'hadir') === $status)>
+                              {{ \App\Models\StudentAttendance::statusLabel($status) }}
+                            </option>
+                          @endforeach
+                        </select>
+                      </td>
+                    </tr>
+                    @endforeach
+                  </tbody>
+                </table>
+              </div>
+            </form>
+            @else
+            <div class="card-body text-center text-muted py-5">
+              Pilih kelompok yang memiliki siswa aktif untuk mencatat absensi.
+            </div>
+            @endif
           </div>
         </div>
 
@@ -439,5 +526,11 @@
 
     @include('partials.footer-scripts')
     <script src="{{ asset('ebimbel-crud.js') }}"></script>
+    <script>
+      if (new URLSearchParams(window.location.search).has('absensi_tanggal')) {
+        const tab = document.getElementById('tab-absensi-siswa');
+        if (tab) bootstrap.Tab.getOrCreateInstance(tab).show();
+      }
+    </script>
   </body>
 </html>

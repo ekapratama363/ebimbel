@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Attendance extends Model
 {
-    protected $fillable = ['employee_id', 'date', 'check_in', 'status'];
+    public const STATUSES = ['hadir', 'izin', 'cuti', 'tidak_hadir'];
+
+    protected $fillable = ['employee_id', 'date', 'check_in', 'check_out', 'status', 'notes'];
 
     protected function casts(): array
     {

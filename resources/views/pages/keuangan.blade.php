@@ -95,6 +95,7 @@
             style="background: var(--eb-surface); border-color: var(--eb-border) !important"
           >
             <h2 class="h6 fw-bold mb-0 px-1">Daftar pembayaran siswa</h2>
+            @perm('keuangan.create')
             <button
               class="btn btn-eb btn-sm"
               type="button"
@@ -103,6 +104,7 @@
             >
               <i class="bi bi-plus-lg me-1"></i>Tambah tagihan
             </button>
+            @endperm
           </div>
           <div class="card table-card border-0">
             <div class="table-responsive eb-table-wrap">
@@ -152,6 +154,7 @@
                       <a href="{{ route('keuangan.payments.show', $payment) }}" class="btn btn-sm btn-light border" title="Detail">
                         <i class="bi bi-eye"></i>
                       </a>
+                      @perm('keuangan.edit')
                       <button
                         class="btn btn-sm btn-light border"
                         type="button"
@@ -163,14 +166,17 @@
                       >
                         <i class="bi bi-pencil"></i>
                       </button>
+                      @endperm
                       @if ($payment->status !== 'lunas' && $duitkuConfigured)
                       <a href="{{ route('keuangan.payments.duitku', $payment) }}" class="btn btn-sm btn-eb" title="Bayar Duitku"><i class="bi bi-credit-card"></i></a>
                       @endif
+                      @perm('keuangan.delete')
                       <form method="post" action="{{ route('keuangan.payments.destroy', $payment) }}" class="d-inline" onsubmit="return confirm('Hapus tagihan ini?')">
                         @csrf
                         @method('DELETE')
                         <button class="btn btn-sm btn-light border text-danger" type="submit" title="Hapus"><i class="bi bi-trash"></i></button>
                       </form>
+                      @endperm
                     </td>
                   </tr>
                   @empty
@@ -448,6 +454,7 @@
               <div class="col-md-6">
                 <label class="form-label">Bukti pembayaran</label>
                 <input type="file" class="form-control" name="proof" accept="image/*,.pdf" />
+                <div class="form-text">JPG/PNG/PDF, maks. 2 MB.</div>
               </div>
             </div>
           </div>

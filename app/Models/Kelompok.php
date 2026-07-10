@@ -20,6 +20,11 @@ class Kelompok extends Model
         return $this->hasMany(Student::class);
     }
 
+    public function studentAttendances(): HasMany
+    {
+        return $this->hasMany(StudentAttendance::class);
+    }
+
     public function studentCount(): int
     {
         return $this->students()->where('status', 'aktif')->count();

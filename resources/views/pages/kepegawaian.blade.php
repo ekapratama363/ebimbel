@@ -242,7 +242,7 @@
         </div>
 
         <div class="tab-pane fade" id="pane-absensi" role="tabpanel">
-          <h2 class="h6 fw-bold mb-3">Absensi &amp; jadwal kerja bulan ini</h2>
+          <h2 class="h6 fw-bold mb-3">Absensi karyawan bulan {{ \Carbon\Carbon::parse($selectedDate)->locale('id')->translatedFormat('F Y') }}</h2>
           <div class="row g-3 mb-4">
             <div class="col-md-4">
               <div class="card eb-stat border-0">
@@ -279,8 +279,20 @@
             </div>
           </div>
           <div class="card table-card border-0">
-            <div class="eb-table-toolbar">
-              <h6 class="mb-0 fw-bold">Jadwal kerja hari ini</h6>
+            <div class="eb-table-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <form method="get" action="{{ route('kepegawaian') }}" class="d-flex align-items-end gap-2 flex-wrap">
+                <input type="hidden" name="tab" value="absensi" />
+                <div>
+                  <label class="form-label small mb-1" for="filter-tanggal">Tanggal</label>
+                  <input type="date" class="form-control form-control-sm" id="filter-tanggal" name="tanggal" value="{{ $selectedDate }}" />
+                </div>
+                <button type="submit" class="btn btn-sm btn-outline-secondary">Tampilkan</button>
+              </form>
+              @perm('kepegawaian.create')
+              <button type="button" class="btn btn-sm btn-eb" data-bs-toggle="modal" data-bs-target="#modalAbsensi">
+                <i class="bi bi-plus-lg"></i> Catat absensi
+              </button>
+              @endperm
             </div>
             <div class="table-responsive eb-table-wrap">
               <table class="table mb-0">
@@ -289,11 +301,13 @@
                     <th class="ps-3">Nama</th>
                     <th>Jabatan</th>
                     <th>Jam masuk</th>
+                    <th>Jam pulang</th>
                     <th>Status</th>
+                    <th class="text-end pe-3">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
-                  @forelse ($attendancesToday as $attendance)
+                  @forelse ($attendancesOnDate as $attendance)
                   @php
                     $initials = collect(explode(' ', $attendance->employee->name))->map(fn ($w) => mb_substr($w, 0, 1))->take(2)->join('');
                     $avatarClass = ['eb-avatar--primary', 'eb-avatar--secondary', 'eb-avatar--success'][$loop->index % 3];
@@ -307,6 +321,7 @@
                     </td>
                     <td>{{ $attendance->employee->position }}</td>
                     <td>{{ $attendance->check_in ?: '—' }}</td>
+                    <td>{{ $attendance->check_out ?: '—' }}</td>
                     <td>
                       @if ($attendance->status === 'hadir')
                         <span class="badge badge-soft-success">Hadir</span>
@@ -318,10 +333,29 @@
                         <span class="badge text-secondary bg-light">{{ ucfirst(str_replace('_', ' ', $attendance->status)) }}</span>
                       @endif
                     </td>
+                    <td class="text-end pe-3 text-nowrap">
+                      @perm('kepegawaian.edit')
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm p-0 me-2 fw-semibold"
+                        data-eb-modal="modalAbsensi"
+                        data-eb-action="{{ route('kepegawaian.attendances.update', $attendance) }}"
+                        data-eb-title="Ubah absensi"
+                        data-eb-edit="{{ json_encode(['employee_id' => $attendance->employee_id, 'date' => $attendance->date->format('Y-m-d'), 'check_in' => $attendance->check_in, 'check_out' => $attendance->check_out, 'status' => $attendance->status, 'notes' => $attendance->notes]) }}"
+                      >Ubah</button>
+                      @endperm
+                      @perm('kepegawaian.delete')
+                      <form method="post" action="{{ route('kepegawaian.attendances.destroy', $attendance) }}" class="d-inline" onsubmit="return confirm('Hapus absensi ini?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-link btn-sm text-danger p-0 fw-semibold">Hapus</button>
+                      </form>
+                      @endperm
+                    </td>
                   </tr>
                   @empty
                   <tr>
-                    <td colspan="4" class="text-center text-muted py-4">Belum ada data absensi hari ini.</td>
+                    <td colspan="6" class="text-center text-muted py-4">Belum ada data absensi pada tanggal ini.</td>
                   </tr>
                   @endforelse
                 </tbody>
@@ -331,6 +365,60 @@
         </div>
       </div>
     </main>
+
+    <div class="modal fade eb-modal" id="modalAbsensi" tabindex="-1" aria-hidden="true" data-default-title="Catat absensi">
+      <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="{{ route('kepegawaian.attendances.store') }}" data-store-action="{{ route('kepegawaian.attendances.store') }}" class="modal-content">
+          @csrf
+          <div class="modal-header">
+            <h5 class="modal-title">Catat absensi</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label" for="absensi-employee">Karyawan</label>
+              <select class="form-select" id="absensi-employee" name="employee_id" required>
+                <option value="" disabled selected>Pilih karyawan</option>
+                @foreach ($employees as $employee)
+                  <option value="{{ $employee->id }}">{{ $employee->name }} — {{ $employee->position }}</option>
+                @endforeach
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="absensi-date">Tanggal</label>
+              <input type="date" class="form-control" id="absensi-date" name="date" value="{{ $selectedDate }}" required />
+            </div>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label class="form-label" for="absensi-check-in">Jam masuk</label>
+                <input type="text" class="form-control" id="absensi-check-in" name="check_in" placeholder="08:00" />
+              </div>
+              <div class="col-6">
+                <label class="form-label" for="absensi-check-out">Jam pulang</label>
+                <input type="text" class="form-control" id="absensi-check-out" name="check_out" placeholder="17:00" />
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="absensi-status">Status</label>
+              <select class="form-select" id="absensi-status" name="status" required>
+                <option value="hadir" selected>Hadir</option>
+                <option value="izin">Izin</option>
+                <option value="cuti">Cuti</option>
+                <option value="tidak_hadir">Tidak hadir</option>
+              </select>
+            </div>
+            <div class="mb-0">
+              <label class="form-label" for="absensi-notes">Catatan</label>
+              <textarea class="form-control" id="absensi-notes" name="notes" rows="2" placeholder="Opsional"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-eb">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
 
     <div class="modal fade eb-modal" id="modal-tambah-karyawan" tabindex="-1" aria-hidden="true" data-default-title="Tambah karyawan">
       <div class="modal-dialog modal-dialog-centered">
@@ -424,5 +512,11 @@
 
     @include('partials.footer-scripts')
     <script src="{{ asset('ebimbel-crud.js') }}"></script>
+    <script>
+      if (new URLSearchParams(window.location.search).get('tab') === 'absensi') {
+        const tab = document.getElementById('tab-absensi');
+        if (tab) bootstrap.Tab.getOrCreateInstance(tab).show();
+      }
+    </script>
   </body>
 </html>

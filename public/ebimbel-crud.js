@@ -43,6 +43,13 @@ document.addEventListener('DOMContentLoaded', () => {
       methodField.value = 'PUT';
 
       Object.entries(data).forEach(([name, value]) => {
+        if (name === 'permissions' && Array.isArray(value)) {
+          form.querySelectorAll('input[name="permissions[]"]').forEach((checkbox) => {
+            checkbox.checked = value.includes(checkbox.value);
+          });
+          return;
+        }
+
         const field = form.querySelector(`[name="${name}"]`);
         if (!field) return;
         field.value = value ?? '';
@@ -64,6 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
       form.action = form.dataset.storeAction;
       form.reset();
+
+      form.querySelectorAll('input[name="permissions[]"]').forEach((checkbox) => {
+        checkbox.checked = false;
+      });
 
       const methodField = form.querySelector('input[name="_method"]');
       if (methodField) methodField.remove();

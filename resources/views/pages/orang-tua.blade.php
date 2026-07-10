@@ -90,6 +90,43 @@
         </div>
       </div>
 
+      @if ($selectedStudentId && ($attendanceSummary['total'] ?? 0) > 0)
+      <div class="card border-0 mb-4">
+        <div class="card-body">
+          <h2 class="h6 fw-bold mb-3"><i class="bi bi-calendar-check me-1"></i> Ringkasan kehadiran bulan ini</h2>
+          <div class="row g-3">
+            <div class="col-6 col-md-3">
+              <div class="text-center p-3 rounded" style="background: var(--eb-surface)">
+                <div class="h4 fw-bold text-success mb-0">{{ $attendanceSummary['hadir'] }}</div>
+                <div class="small text-muted">Hadir</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="text-center p-3 rounded" style="background: var(--eb-surface)">
+                <div class="h4 fw-bold text-warning mb-0">{{ $attendanceSummary['izin'] }}</div>
+                <div class="small text-muted">Izin</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="text-center p-3 rounded" style="background: var(--eb-surface)">
+                <div class="h4 fw-bold text-info mb-0">{{ $attendanceSummary['sakit'] }}</div>
+                <div class="small text-muted">Sakit</div>
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <div class="text-center p-3 rounded" style="background: var(--eb-surface)">
+                <div class="h4 fw-bold text-danger mb-0">{{ $attendanceSummary['alpha'] }}</div>
+                <div class="small text-muted">Alpha</div>
+              </div>
+            </div>
+          </div>
+          <p class="small text-muted mb-0 mt-3">
+            Total {{ $attendanceSummary['total'] }} pertemuan tercatat bulan {{ now()->locale('id')->translatedFormat('F Y') }}.
+          </p>
+        </div>
+      </div>
+      @endif
+
       <p class="small text-muted mb-3">
         <i class="bi bi-funnel me-1"></i> Menampilkan laporan yang statusnya <strong>terbit</strong> untuk
         kelas terkait.

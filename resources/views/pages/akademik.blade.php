@@ -10,6 +10,14 @@
     @include('partials.admin-nav', ['activeModule' => 'akademik'])
 
     <main class="eb-main container-fluid px-3 px-md-4 py-4">
+      @php
+        $canAkademik = [
+          'create' => $can('akademik.create'),
+          'edit' => $can('akademik.edit'),
+          'delete' => $can('akademik.delete'),
+          'publish' => $can('akademik.publish'),
+        ];
+      @endphp
       @include('partials.flash')
 
       <div class="card eb-page-head border-0 mb-4">
@@ -23,6 +31,18 @@
 
       <div class="eb-subnav-wrap">
         <ul class="nav eb-subnav" id="akademikTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="tab-jenjang"
+              data-bs-toggle="tab"
+              data-bs-target="#pane-jenjang"
+              type="button"
+              role="tab"
+            >
+              <i class="bi bi-mortarboard me-1"></i> Jenjang
+            </button>
+          </li>
           <li class="nav-item" role="presentation">
             <button
               class="nav-link active"
@@ -87,6 +107,85 @@
       </div>
 
       <div class="tab-content" id="akademikTabsContent">
+        <div class="tab-pane fade" id="pane-jenjang" role="tabpanel">
+          <div class="card table-card border-0">
+            <div
+              class="eb-table-toolbar d-flex justify-content-between align-items-center flex-wrap gap-2"
+            >
+              <span class="fw-semibold">Master jenjang pendidikan</span>
+              @if ($canAkademik['create'])
+              <button
+                type="button"
+                class="btn btn-sm btn-eb"
+                data-bs-toggle="modal"
+                data-bs-target="#modalJenjang"
+              >
+                <i class="bi bi-plus-lg"></i> Tambah jenjang
+              </button>
+              @endif
+            </div>
+            <div class="table-responsive eb-table-wrap">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Kode</th>
+                    <th>Nama jenjang</th>
+                    <th>Urutan</th>
+                    <th>Status</th>
+                    <th class="text-end">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @forelse ($jenjangs as $jenjang)
+                  <tr>
+                    <td><code>{{ $jenjang->code }}</code></td>
+                    <td>{{ $jenjang->name }}</td>
+                    <td>{{ $jenjang->sort_order }}</td>
+                    <td>
+                      @if ($jenjang->status === 'aktif')
+                        <span class="badge badge-eb rounded-pill">Aktif</span>
+                      @else
+                        <span class="badge rounded-pill text-secondary bg-light">{{ ucfirst($jenjang->status) }}</span>
+                      @endif
+                    </td>
+                    <td class="text-end">
+                      @if ($canAkademik['edit'])
+                      <button
+                        type="button"
+                        class="btn btn-link btn-sm p-0 me-2 fw-semibold"
+                        data-eb-modal="modalJenjang"
+                        data-eb-action="{{ route('akademik.jenjangs.update', $jenjang) }}"
+                        data-eb-title="Ubah jenjang"
+                        data-eb-edit="{{ json_encode(['code' => $jenjang->code, 'name' => $jenjang->name, 'sort_order' => $jenjang->sort_order, 'status' => $jenjang->status]) }}"
+                      >Ubah</button>
+                      @endif
+                      @if ($canAkademik['delete'])
+                      <form
+                        method="post"
+                        action="{{ route('akademik.jenjangs.destroy', $jenjang) }}"
+                        class="d-inline"
+                        onsubmit="return confirm('Hapus jenjang ini?')"
+                      >
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-link btn-sm text-danger p-0 fw-semibold">
+                          Hapus
+                        </button>
+                      </form>
+                      @endif
+                    </td>
+                  </tr>
+                  @empty
+                  <tr>
+                    <td colspan="5" class="text-center text-muted py-4">Belum ada jenjang.</td>
+                  </tr>
+                  @endforelse
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
         <div class="tab-pane fade show active" id="pane-program" role="tabpanel">
           <div class="card table-card border-0">
             <div
@@ -118,7 +217,7 @@
                   <tr>
                     <td><code>{{ $program->code }}</code></td>
                     <td>{{ $program->name }}</td>
-                    <td>{{ $program->jenjang }}</td>
+                    <td>{{ $program->jenjang?->name ?? '—' }}</td>
                     <td>
                       @if ($program->status === 'aktif')
                         <span class="badge badge-eb rounded-pill">Aktif</span>
@@ -133,7 +232,7 @@
                         data-eb-modal="modalTambahProgram"
                         data-eb-action="{{ route('akademik.programs.update', $program) }}"
                         data-eb-title="Ubah program"
-                        data-eb-edit="{{ json_encode(['code' => $program->code, 'name' => $program->name, 'jenjang' => $program->jenjang]) }}"
+                        data-eb-edit="{{ json_encode(['code' => $program->code, 'name' => $program->name, 'jenjang_id' => $program->jenjang_id]) }}"
                       >Ubah</button>
                       <form
                         method="post"
@@ -452,6 +551,43 @@
       </div>
     </main>
 
+    <div class="modal fade eb-modal" id="modalJenjang" tabindex="-1" aria-hidden="true" data-default-title="Tambah jenjang">
+      <div class="modal-dialog modal-dialog-centered">
+        <form method="post" action="{{ route('akademik.jenjangs.store') }}" data-store-action="{{ route('akademik.jenjangs.store') }}" class="modal-content">
+          @csrf
+          <div class="modal-header">
+            <h2 class="modal-title">Tambah jenjang</h2>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label" for="jenjang-code">Kode jenjang</label>
+              <input type="text" class="form-control" id="jenjang-code" name="code" placeholder="SD" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="jenjang-name">Nama jenjang</label>
+              <input type="text" class="form-control" id="jenjang-name" name="name" placeholder="Sekolah Dasar" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label" for="jenjang-sort">Urutan tampil</label>
+              <input type="number" class="form-control" id="jenjang-sort" name="sort_order" min="0" value="0" />
+            </div>
+            <div class="mb-0">
+              <label class="form-label" for="jenjang-status">Status</label>
+              <select class="form-select" id="jenjang-status" name="status">
+                <option value="aktif" selected>Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-eb">Simpan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <div class="modal fade eb-modal" id="modalTambahProgram" tabindex="-1" aria-labelledby="lblProgram" aria-hidden="true" data-default-title="Tambah program">
       <div class="modal-dialog modal-dialog-centered">
         <form method="post" action="{{ route('akademik.programs.store') }}" data-store-action="{{ route('akademik.programs.store') }}" class="modal-content">
@@ -471,10 +607,11 @@
             </div>
             <div class="mb-0">
               <label class="form-label" for="program-jenjang">Jenjang</label>
-              <select class="form-select" id="program-jenjang" name="jenjang" required>
-                <option value="SD">SD</option>
-                <option value="SMP">SMP</option>
-                <option value="SMA" selected>SMA</option>
+              <select class="form-select" id="program-jenjang" name="jenjang_id" required>
+                <option value="" disabled selected>Pilih jenjang</option>
+                @foreach ($jenjangs->where('status', 'aktif') as $jenjang)
+                  <option value="{{ $jenjang->id }}">{{ $jenjang->code }} — {{ $jenjang->name }}</option>
+                @endforeach
               </select>
             </div>
           </div>
@@ -708,12 +845,12 @@
               <div class="col-12">
                 <label class="form-label" for="report-photos">Foto kegiatan</label>
                 <input type="file" class="form-control" id="report-photos" name="photos[]" accept="image/*" multiple />
-                <div class="form-text">Bisa pilih banyak foto sekaligus. PNG/JPG/WebP, maks. 5 MB per file.</div>
+                <div class="form-text">Bisa pilih banyak foto sekaligus. PNG/JPG/WebP, maks. 2 MB per file.</div>
               </div>
               <div class="col-12">
                 <label class="form-label" for="report-videos">Video sesi</label>
                 <input type="file" class="form-control" id="report-videos" name="videos[]" accept="video/*" multiple />
-                <div class="form-text">MP4/MOV/WebM, maks. 50 MB per file. Tambah lampiran lagi lewat tombol <strong>Lampiran</strong> di tabel.</div>
+                <div class="form-text">MP4/MOV/WebM, maks. 2 MB per file. Tambah lampiran lagi lewat tombol <strong>Lampiran</strong> di tabel.</div>
               </div>
             </div>
           </div>
@@ -741,10 +878,12 @@
               <div class="mb-3">
                 <label class="form-label" for="lampiran-photos">Tambah foto</label>
                 <input type="file" class="form-control" id="lampiran-photos" name="photos[]" accept="image/*" multiple />
+                <div class="form-text">PNG/JPG/WebP, maks. 2 MB per file.</div>
               </div>
               <div class="mb-3">
                 <label class="form-label" for="lampiran-videos">Tambah video</label>
                 <input type="file" class="form-control" id="lampiran-videos" name="videos[]" accept="video/*" multiple />
+                <div class="form-text">MP4/MOV/WebM, maks. 2 MB per file.</div>
               </div>
               <button type="submit" class="btn btn-eb btn-sm">Unggah lampiran</button>
             </form>

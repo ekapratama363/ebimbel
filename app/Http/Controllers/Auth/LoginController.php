@@ -27,9 +27,22 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
+        $user = Auth::user();
+        $route = $user->firstAccessibleRoute();
+
+        if (! $route) {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            throw ValidationException::withMessages([
+                'email' => 'Akun Anda belum memiliki izin akses ke modul manapun.',
+            ]);
+        }
+
         return redirect()
-            ->route('akademik')
-            ->with('status', 'Selamat datang, '.Auth::user()->name.'.');
+            ->route($route)
+            ->with('status', 'Selamat datang, '.$user->name.'.');
     }
 
     public function destroy(Request $request): RedirectResponse
